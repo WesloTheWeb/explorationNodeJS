@@ -1,0 +1,24 @@
+{
+  "name": "nodejs-complete-guide",
+  "version": "1.0.0",
+  "description": "Exploration in node and express from udemy course to learn.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+    "start-server": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WesloTheWeb/explorationNodeJS.git"
+  },
+  "author": "wesley",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WesloTheWeb/explorationNodeJS/issues"
+  },
+  "homepage": "https://github.com/WesloTheWeb/explorationNodeJS#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
