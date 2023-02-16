@@ -1,16 +1,16 @@
 const express = require('express');
+const adminRoute = require('./routes/admin'); // order of imports does not matter
+const shopRoute = require('./routes/shop');
 
 const app = express();
 
-// using our middleware
-app.use((req, res, next) => {
-    console.log(`I'm In the middleware!`);
-    next();
-});
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-app.use((req, res, next) => {
-    console.log(`In the middleware again LOL`)
-    res.send('<h1>Hello from Express!</h1>')
-}); 
+// order matters on middleware
+app.use(adminRoute);
+app.use(shopRoute);
+
+
 
 app.listen(3000);
