@@ -2,12 +2,16 @@ const express = require('express');
 const path = require('path');
 
 const router = express.Router();
-
 const products = [];
 
 // /admin/add-product => GET
 router.get('/add-products', (req, res, next) => {
-    res.sendFile(path.join(__dirname, '../', 'views', 'add-product.html'))
+    res.render('add-products', {
+        pageTitle: 'Add Products',
+        path: '/admin/add-products',
+        activeAddProduct: true
+    });
+    // res.sendFile(path.join(__dirname, '../', 'views', 'add-product.html'))
 });
 
 // /admin/add-products => POST
