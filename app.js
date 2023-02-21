@@ -1,12 +1,15 @@
 const express = require('express');
-const adminData = require('./routes/admin'); // order of imports does not matter
+const adminRoutes = require('./routes/admin'); // order of imports does not matter
 const shopRoute = require('./routes/shop');
+const errorController = require('./controllers/error')
 const path = require('path')
+
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
+// parses form data
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -14,16 +17,10 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // order matters on middleware
-app.use('/admin', adminData.routes);
+app.use('/admin', adminRoutes);
 app.use(shopRoute);
 
 // 404 page catch all
-app.use((req, res, next) => {
-    res.status(404).render('404', { 
-        pageTitle: 'Page Not Found',
-        path: ""
-    })
-    // res.status(404).sendFile(path.join(__dirname, 'views', '404.html'))
-});
+app.use(errorController.get404);
 
 app.listen(3000);
