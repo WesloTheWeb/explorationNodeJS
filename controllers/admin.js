@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
-// Render() will render from our views folder:
-exports.getAddProduct = (req, res, next) => {
+// Render will render from our views folder:
+exports.getAddProducts = (req, res, next) => {
   res.render('admin/add-products', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
