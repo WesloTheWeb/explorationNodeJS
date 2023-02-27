@@ -1,1 +1,16 @@
-[{"id":"12345","title":"Reading Rainbow","imageUrl":"http://static9.depositphotos.com/1008244/1074/v/170/depositphotos_10745131-Open-book.jpg","description":"Take a look. It's in a book. It's reading rainbow.","price":"19.99"},{"id":"0.3570373283991539","title":"The Last of Us Part 1.","imageUrl":"https://www.publicdomainpictures.net/pictures/10000/velka/1-1210009435EGmE.jpg","description":"From the award winning HBO series and video games comes the graphic novel. Follow the adventures of Joel and Ellie as they deal with the aftermath of society's collapse.","price":"59.99"}]
+[
+    {
+        "id": "12345",
+        "title": "Reading Rainbow",
+        "imageUrl": "http://static9.depositphotos.com/1008244/1074/v/170/depositphotos_10745131-Open-book.jpg",
+        "description": "Take a look. It's in a book. It's reading rainbow.",
+        "price": "19.99"
+    },
+    {
+        "id": "0.3570373283991539",
+        "title": "The Last of Us Part 1.",
+        "imageUrl": "https://www.publicdomainpictures.net/pictures/10000/velka/1-1210009435EGmE.jpg",
+        "description": "From the award winning HBO series and video games comes the graphic novel. Follow the adventures of Joel and Ellie as they deal with the aftermath of society's collapse.",
+        "price": "59.99"
+    }
+]
