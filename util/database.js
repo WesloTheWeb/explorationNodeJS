@@ -1,12 +1,11 @@
 require('dotenv').config();
-const mysql = require('mysql2');
 
-// creation of a pool to handle many queries.
-const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    database: 'node-complete',
-    password: process.env.DB_PASSWORD
+const Sequelize = require('sequelize');
+const dbPassword = process.env.DB_PASSWORD
+
+const sequelize = new Sequelize('node-complete', 'root', dbPassword, {
+    dialect: 'mysql',
+    host: 'localhost'
 });
 
-module.exports = pool.promise();
+module.exports = sequelize;
