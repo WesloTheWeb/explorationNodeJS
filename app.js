@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const adminRoutes = require('./routes/admin'); // order of imports does not matter
 const shopRoute = require('./routes/shop');
