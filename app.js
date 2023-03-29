@@ -5,17 +5,8 @@ const adminRoutes = require('./routes/admin'); // order of imports does not matt
 const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error')
 const path = require('path')
-const db = require('./util/database');
 
 const app = express();
-
-db.execute('SELECT * FROM products')
-    .then((results) => {
-        console.log(results[0], results[1]);
-    })
-    .catch((err) => {
-        console.log(err);
-    });;
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
