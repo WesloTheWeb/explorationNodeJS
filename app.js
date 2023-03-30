@@ -5,6 +5,7 @@ const adminRoutes = require('./routes/admin'); // order of imports does not matt
 const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error')
 const path = require('path')
+const sequelize = require('./util/database');
 
 const app = express();
 
@@ -25,4 +26,9 @@ app.use(shopRoute);
 // 404 page catch all
 app.use(errorController.get404);
 
-app.listen(3000);
+sequelize.sync()
+    .then((result) => {
+        // console.log(result)
+        app.listen(3000);
+    })
+    .catch(err => console.log(err));
