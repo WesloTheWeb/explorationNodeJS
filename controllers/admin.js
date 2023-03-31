@@ -38,8 +38,10 @@ exports.getEditProduct = (req, res, next) => {
   };
 
   const prodId = req.params.productId;
-  Product.findByPk(prodId)
-    .then((product) => {
+  req.user
+    .getProducts({ where: { id: prodId } })
+    .then((products) => {
+      const product = products[0];
       if (!product) {
         return res.redirect('/');
       };
@@ -75,9 +77,9 @@ exports.postEditProduct = (req, res, next) => {
     .catch(err => console.log(err));
 };
 
-// This is exporting the function logic of fetchAll.
 exports.getProducts = (req, res, next) => {
-  Product.findAll()
+  req.user
+    .getProducts()
     .then((products) => {
       res.render('admin/products', {
         prods: products,
