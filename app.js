@@ -15,6 +15,7 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
+// order matters on middleware:
 // parses form data
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -22,19 +23,45 @@ app.use(express.json());
 // allows static CSS file to be used.
 app.use(express.static(path.join(__dirname, 'public')));
 
-// order matters on middleware
+// dummy data
+app.use((req, res, next) => {
+    User.findByPk(1)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err));
+});
+
+Product.belongsTo(User, { constraints: true, onDelee: 'CASCADE' });
+User.hasMany(Product);
+
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
 
 // 404 page catch all
 app.use(errorController.get404);
 
-Product.belongsTo(User, { constraints: true, onDelee: 'CASCADE' });
-User.hasMany(Product);
 
-sequelize.sync({ force: true })
+// old set up
+// sequelize.sync({ force: true })
+//     .then((result) => {
+//         // console.log(result)
+//         app.listen(3000);
+//     })
+//     .catch(err => console.log(err));
+
+// Dummy User set up:
+sequelize.sync()
     .then((result) => {
-        // console.log(result)
+        return User.findByPk(1);
+    })
+    .then(user => {
+        if (!user) {
+            return User.create({ name: 'Wes', email: 'deezenuts143@uwu.com' })
+        }
+    })
+    .then(user => {
         app.listen(3000);
     })
     .catch(err => console.log(err));
