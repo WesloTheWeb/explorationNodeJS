@@ -1,5 +1,3 @@
-// TODO: Lesson 169 fix the cart logic. 
-
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 
@@ -46,11 +44,11 @@ exports.getCart = (req, res, next) => {
     .getCart()
     .then(cart => {
       return cart.getProducts()
-        .then(cartProducts => {
+        .then(products => {
           res.render('shop/cart', {
             path: '/cart',
             pageTitle: 'Your Cart',
-            products: cartProducts
+            products: products
           });
         })
         .catch(err => console.log(err));
@@ -61,40 +59,31 @@ exports.getCart = (req, res, next) => {
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   let fetchedCart;
+  let newQuantity = 1;
 
-  req.user
-    .getCart()
+  req.user.getCart()
     .then(cart => {
       fetchedCart = cart;
-      return cart.getProducts({ where: { id: prodId } })
+      return cart.getProducts({ where: { id: prodId } });
     })
     .then(products => {
       let product;
-
       if (products.length > 0) {
         product = products[0];
-      };
-      let newQuantity = 1;
+      }
 
       if (product) {
         const oldQuantity = product.cartItem.quantity;
         newQuantity = oldQuantity + 1;
-        
-      };
-
+        return product;
+      }
       return Product.findByPk(prodId)
-        .then((product) => {
+      })
+      .then(product => {
           return fetchedCart.addProduct(product, {
             through: { quantity: newQuantity }
           });
         })
-        .catch(err => console.log(err));
-    })
-    .then((data) => {
-      return fetchCard.addProduct(product, {
-        through: { quantity: newQuantity }
-      });
-    });
     .then(() => {
       res.redirect('/cart');
     })
