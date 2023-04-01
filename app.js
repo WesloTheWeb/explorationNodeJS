@@ -7,6 +7,8 @@ const errorController = require('./controllers/error');
 const path = require('path');
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-Item');
 
 const sequelize = require('./util/database');
 
@@ -33,8 +35,13 @@ app.use((req, res, next) => {
         .catch(err => console.log(err));
 });
 
+// ASSOCIATION - Sequelize:
 Product.belongsTo(User, { constraints: true, onDelee: 'CASCADE' });
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
@@ -52,7 +59,8 @@ app.use(errorController.get404);
 //     .catch(err => console.log(err));
 
 // Dummy User set up:
-sequelize.sync()
+// sequelize.sync()
+sequelize.sync({ force: true })
     .then((result) => {
         return User.findByPk(1);
     })
