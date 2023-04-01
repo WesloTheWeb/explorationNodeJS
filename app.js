@@ -59,8 +59,8 @@ app.use(errorController.get404);
 //     .catch(err => console.log(err));
 
 // Dummy User set up:
-// sequelize.sync()
-sequelize.sync({ force: true })
+sequelize.sync()
+    // sequelize.sync({ force: true })
     .then((result) => {
         return User.findByPk(1);
     })
@@ -68,8 +68,12 @@ sequelize.sync({ force: true })
         if (!user) {
             return User.create({ name: 'Wes', email: 'deezenuts143@uwu.com' })
         }
+        return user;
     })
     .then(user => {
+        return user.createCart();
+    })
+    .then(cart => {
         app.listen(3000);
     })
     .catch(err => console.log(err));
