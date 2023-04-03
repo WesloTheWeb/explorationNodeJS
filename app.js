@@ -38,7 +38,6 @@ app.use((req, res, next) => {
 // 404 page catch all
 app.use(errorController.get404);
 
-mongoConnect((client) => {
-    console.log(client);
+mongoConnect(() => {
     app.listen(3000);
 });
