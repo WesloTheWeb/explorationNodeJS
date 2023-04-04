@@ -1,4 +1,4 @@
-const mongoDb = require('mongodb');
+const mongodb = require('mongodb');
 const getDb = require('../util/database').getDb;
 
 class Product {
@@ -17,7 +17,7 @@ class Product {
     if (this._id) {
       // update the product
       db0p = db.collection('products')
-        .updateOne({ _id: new mongoDb.ObjectId(this._id) }, { $set: this })
+        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this })
     } else {
       // insert the product
       db0p = db.collection('products')
@@ -45,7 +45,7 @@ class Product {
   static findById(prodId) {
     const db = getDb();
     return db.collection('products')
-      .find({ _id: new mongoDb.ObjectId(prodId) })
+      .find({ _id: new mongodb.ObjectId(prodId) })
       .next()
       .then((product) => {
         console.log(product);
