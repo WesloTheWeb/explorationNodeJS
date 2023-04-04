@@ -1,7 +1,4 @@
-const mongodb = require('mongodb');
 const Product = require('../models/product');
-
-const ObjectId = mongodb.ObjectId;
 
 // Render will render from our views folder:
 exports.getAddProduct = (req, res, next) => {
@@ -17,7 +14,7 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
-  const product = new Product(title, price, description, imageUrl);
+  const product = new Product(title, price, imageUrl, description);
   product.save()
     .then(result => {
       console.log(result);
@@ -57,15 +54,15 @@ exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
-  const updatedDesc = req.body.description;
   const updatedImageUrl = req.body.imageUrl;
+  const updatedDesc = req.body.description;
 
   const product = new Product(
     updatedTitle,
     updatedPrice,
     updatedImageUrl,
     updatedDesc,
-    new ObjectId(prodId)
+    prodId
   );
 
   product.save()
