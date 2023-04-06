@@ -2,7 +2,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 // order of imports does not matter
-const adminRoutes = require('./routes/admin'); 
+const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error');
 const mongoConnect = require('./util/database').mongoConnect;
@@ -23,13 +23,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // dummy data
 app.use((req, res, next) => {
-    // User.findByPk(1)
-    //     .then(user => {
-    //         req.user = user;
-    //         next();
-    //     })
-    //     .catch(err => console.log(err));
-    next();
+    User.findById("642f1f544bfefe6b28dcf52d")
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err));
 });
 
 app.use('/admin', adminRoutes);
