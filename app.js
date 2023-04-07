@@ -1,7 +1,7 @@
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
-// order of imports does not matter
+// order of imports does not matterb
 const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error');
@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
     User.findById("642f1f544bfefe6b28dcf52d")
         .then(user => {
-            req.user = user;
+            req.user = new User(user.name, user.email, user.cart, user._id);
             next();
         })
         .catch(err => console.log(err));
