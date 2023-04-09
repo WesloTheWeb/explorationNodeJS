@@ -15,16 +15,15 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
   const product = new Product(
-    title,
-    price,
-    imageUrl,
-    description,
-    null,
-    req.user._id
-  );
+    {
+      title: title,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+    });
   product.save()
     .then(result => {
-      console.log(result);
+      // console.log(result);
       console.log('Product Created.');
       res.redirect('/admin/products');
     })

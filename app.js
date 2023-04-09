@@ -6,7 +6,7 @@ const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error');
 const mongoose = require('mongoose');
-const User = require('./models/user');
+// const User = require('./models/user');
 
 const MongoDBPassword = process.env.DB_PASSWORD;
 
@@ -25,14 +25,14 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // dummy data
-app.use((req, res, next) => {
-    User.findById("642f1f544bfefe6b28dcf52d")
-        .then(user => {
-            req.user = new User(user.name, user.email, user.cart, user._id);
-            next();
-        })
-        .catch(err => console.log(err));
-});
+// app.use((req, res, next) => {
+//     User.findById("642f1f544bfefe6b28dcf52d")
+//         .then(user => {
+//             req.user = new User(user.name, user.email, user.cart, user._id);
+//             next();
+//         })
+//         .catch(err => console.log(err));
+// });
 
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
