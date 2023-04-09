@@ -5,8 +5,11 @@ const express = require('express');
 const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error');
-const mongoConnect = require('./util/database').mongoConnect;
+const mongoose = require('mongoose');
 const User = require('./models/user');
+
+const MongoDBPassword = process.env.DB_PASSWORD;
+
 
 const app = express();
 
@@ -37,6 +40,8 @@ app.use(shopRoute);
 // 404 page catch all
 app.use(errorController.get404);
 
-mongoConnect(() => {
+mongoose.connect(`mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop?retryWrites=true&w=majority`)
+.then((result) => {
     app.listen(3000);
-});
+})
+.catch(err => console.log(err));
