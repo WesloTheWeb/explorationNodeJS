@@ -1,18 +1,12 @@
 require('dotenv').config();
-
+const path = require('path');
 const express = require('express');
-const adminRoutes = require('./routes/admin'); // order of imports does not matter
+// order of imports does not matterb
+const adminRoutes = require('./routes/admin');
 const shopRoute = require('./routes/shop');
 const errorController = require('./controllers/error');
-const path = require('path');
-const Product = require('./models/product');
+const mongoConnect = require('./util/database').mongoConnect;
 const User = require('./models/user');
-const Cart = require('./models/cart');
-const CartItem = require('./models/cart-Item');
-const Order = require('./models/order');
-const OrderItem = require('./models/order-item');
-
-const sequelize = require('./util/database');
 
 const app = express();
 
@@ -29,24 +23,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // dummy data
 app.use((req, res, next) => {
-    User.findByPk(1)
+    User.findById("642f1f544bfefe6b28dcf52d")
         .then(user => {
-            req.user = user;
+            req.user = new User(user.name, user.email, user.cart, user._id);
             next();
         })
         .catch(err => console.log(err));
 });
-
-// ASSOCIATION - Sequelize:
-Product.belongsTo(User, { constraints: true, onDelee: 'CASCADE' });
-User.hasMany(Product);
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsToMany(Product, { through: OrderItem });
 
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
@@ -54,31 +37,6 @@ app.use(shopRoute);
 // 404 page catch all
 app.use(errorController.get404);
 
-
-// old set up
-// sequelize.sync({ force: true })
-//     .then((result) => {
-//         // console.log(result)
-//         app.listen(3000);
-//     })
-//     .catch(err => console.log(err));
-
-// Dummy User set up:
-sequelize.sync()
-    // sequelize.sync({ force: true })
-    .then((result) => {
-        return User.findByPk(1);
-    })
-    .then(user => {
-        if (!user) {
-            return User.create({ name: 'Wes', email: 'deezenuts143@uwu.com' })
-        }
-        return user;
-    })
-    .then(user => {
-        return user.createCart();
-    })
-    .then(cart => {
-        app.listen(3000);
-    })
-    .catch(err => console.log(err));
+mongoConnect(() => {
+    app.listen(3000);
+});
