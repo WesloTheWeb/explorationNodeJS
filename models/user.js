@@ -67,6 +67,7 @@ class User {
     };
 
     deleteItemFromCart(prodId) {
+        // If true, will be included in new array, if false will not be included.
         const updatedCartItems = this.cart.items.filter((item) => {
             return item.productId.toString() !== prodId.toString();
         });
@@ -77,6 +78,36 @@ class User {
                 { _id: new ObjectId(this._id) },
                 { $set: { cart: { items: updatedCartItems } } }
             );
+    };
+
+    addOrder() {
+        const db = getDb();
+        return this.getCart()
+            .then((products) => {
+                const order = {
+                    items: products,
+                    user: {
+                        _id: new ObjectId(this._id),
+                        name: this.name
+                    }
+                };
+                return db.collection('orders').insertOne(order);
+            })
+            .then((result) => {
+                this.cart = { items: [] }
+                return db.collection('users')
+                    .updateOne(
+                        { _id: new ObjectId(this._id) },
+                        { $set: { cart: { items: [] } } }
+                    );
+            });
+    };
+
+    getOrders() {
+        const db = getDb();
+        return db.collection('orders') 
+        .find({ 'user._id': new ObjectId(this._id)})
+        .toArray();
     };
 
     static findById(userId) {
