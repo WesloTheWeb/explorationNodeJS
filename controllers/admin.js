@@ -20,6 +20,7 @@ exports.postAddProduct = (req, res, next) => {
       price: price,
       imageUrl: imageUrl,
       description: description,
+      userId: req.user._id  // we can do this because we related req.user to our user in app.js.
     });
   product.save()
     .then(result => {
