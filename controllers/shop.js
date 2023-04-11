@@ -92,13 +92,16 @@ exports.postOrder = (req, res, next) => {
       return order.save();
     })
     .then(result => {
+      req.user.clearCart();
+    })
+    .then(() => {
       res.redirect('/orders');
     })
     .catch(err => console.log(err));
 };
 
 exports.getOrders = (req, res, next) => {
-  req.user.getOrders()
+  Order.find({ "user.userId": req.user._id })
     .then(orders => {
       res.render('shop/orders', {
         path: '/orders',
@@ -108,3 +111,35 @@ exports.getOrders = (req, res, next) => {
     })
     .catch(err => console.log(err));
 };
+
+/* Note:
+The reason we are able to call req.user.<FUNCTION> is because in our app.js,
+we set our req.user = user, which is our User class model because
+findById returns 
+
+
+req.user is being used as an instance of the User model which has been obtained from the database using the findById method. 
+The User model is defined in the ./models/user.js file.
+
+When the findById method returns a user object, it is attached to the req object by assigning it to the req.user property. 
+This is done using the middleware function:
+
+app.use((req, res, next) => {
+    User.findById("643359cbb3bfb460f2f91522")
+        .then(user => {
+            req.user = user
+            next();
+        })
+        .catch(err => console.log(err));
+});
+
+After attaching the user object to req.user, it can be used in subsequent middleware functions and route handlers.
+
+In the postOrder function, req.user.populate('cart.items.productId') is used to load the productId 
+of each item in the cart. Then, req.user is used to get the name and userId of the user who is placing the order. 
+Finally, req.user.clearCart() is called to clear the cart of the user after the order has been placed.
+
+In the getOrders function, req.user.getOrders() is used to get the orders placed by the user. 
+Here, getOrders() is assumed to be a custom method defined on the User model, which retrieves the orders 
+related to the user.
+*/
