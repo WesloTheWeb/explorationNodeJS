@@ -8,9 +8,10 @@ const authRoutes = require('./routes/auth');
 const errorController = require('./controllers/error');
 const mongoose = require('mongoose');
 const User = require('./models/user');
+const session = require('express-session');
+
 
 const MongoDBPassword = process.env.DB_PASSWORD;
-
 
 const app = express();
 
@@ -35,9 +36,17 @@ app.use((req, res, next) => {
         .catch(err => console.log(err));
 });
 
+app.use(session({
+    secret: 'my-secret',
+    resave: false,
+    saveUninitialized: false
+}));
+
 app.use('/admin', adminRoutes);
 app.use(shopRoute);
 app.use(authRoutes);
+
+
 
 // 404 page catch all
 app.use(errorController.get404);
