@@ -31,16 +31,6 @@ app.use(express.json());
 // allows static CSS file to be used.
 app.use(express.static(path.join(__dirname, 'public')));
 
-// dummy data
-app.use((req, res, next) => {
-    User.findById("643359cbb3bfb460f2f91522")
-        .then(user => {
-            req.user = user
-            next();
-        })
-        .catch(err => console.log(err));
-});
-
 app.use(session({
     secret: 'my-secret',
     resave: false,
