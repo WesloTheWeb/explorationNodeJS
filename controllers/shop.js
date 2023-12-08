@@ -42,7 +42,7 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  req.session.user
+  req.user
     .populate('cart.items.productId')
     .then((user) => {
       const products = user.cart.items;
@@ -60,7 +60,7 @@ exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
     .then((product) => {
-      return req.session.user.addToCart(product);
+      return req.user.addToCart(product);
     })
     .then((result) => {
       console.log(result);
@@ -71,7 +71,7 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  req.session.user
+  req.user
     .deleteItemFromCart(prodId)
     .then((result) => {
       res.redirect('/cart');
@@ -81,7 +81,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
 exports.postOrder = (req, res, next) => {
   // take all cart item and move them into an order
-  req.session.user
+  req.user
     .populate('cart.items.productId')
     .then((user) => {
       const products = user.cart.items.map(i => {
@@ -90,8 +90,8 @@ exports.postOrder = (req, res, next) => {
 
       const order = new Order({
         user: {
-          name: req.session.user.name,
-          userId: req.session.user
+          name: req.user.name,
+          userId: req.user
 
         },
         products: products
@@ -99,7 +99,7 @@ exports.postOrder = (req, res, next) => {
       return order.save();
     })
     .then(result => {
-      req.session.user.clearCart();
+      req.user.clearCart();
     })
     .then(() => {
       res.redirect('/orders');
@@ -109,7 +109,7 @@ exports.postOrder = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
   Order.find({
-    "user.userId": req.session.user._id
+    "user.userId": req.user._id
   })
     .then(orders => {
       res.render('shop/orders', {
@@ -123,9 +123,9 @@ exports.getOrders = (req, res, next) => {
 };
 
 /* Note:
-The reason we are able to call req.session.user
+The reason we are able to call req.user
 .<FUNCTION> is because in our app.js,
-we set our req.session.user
+we set our req.user
  = user, which is our User class model because
 findById returns 
 
@@ -134,31 +134,31 @@ req.user
  is being used as an instance of the User model which has been obtained from the database using the findById method. 
 The User model is defined in the ./models/user.js file.
 
-When the findById method returns a user object, it is attached to the req object by assigning it to the req.session.user
+When the findById method returns a user object, it is attached to the req object by assigning it to the req.user
  property. 
 This is done using the middleware function:
 
 app.use((req, res, next) => {
     User.findById("643359cbb3bfb460f2f91522")
         .then(user => {
-            req.session.user
+            req.user
  = user
             next();
         })
         .catch(err => console.log(err));
 });
 
-After attaching the user object to req.session.user
+After attaching the user object to req.user
 , it can be used in subsequent middleware functions and route handlers.
 
-In the postOrder function, req.session.user
+In the postOrder function, req.user
 .populate('cart.items.productId') is used to load the productId 
-of each item in the cart. Then, req.session.user
+of each item in the cart. Then, req.user
  is used to get the name and userId of the user who is placing the order. 
-Finally, req.session.user
+Finally, req.user
 .clearCart() is called to clear the cart of the user after the order has been placed.
 
-In the getOrders function, req.session.user
+In the getOrders function, req.user
 .getOrders() is used to get the orders placed by the user. 
 Here, getOrders() is assumed to be a custom method defined on the User model, which retrieves the orders 
 related to the user.

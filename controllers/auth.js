@@ -23,7 +23,6 @@ exports.postLogin = (req, res, next) => {
     User.findById("643359cbb3bfb460f2f91522")
         .then(user => {
             req.session.isLoggedIn = true;
-            // set the user here
             req.session.user = user;
             req.session.save((err) => {
                 console.log(err)
