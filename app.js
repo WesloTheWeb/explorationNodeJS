@@ -61,18 +61,6 @@ app.use(errorController.get404);
 // mongoose.connect(`mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop?retryWrites=true&w=majority`)
 mongoose.connect(MONGODB_URI)
     .then((result) => {
-        User.findOne().then(user => {
-            if (!user) {
-                const user = new User({
-                    name: 'Wesley',
-                    email: 'wesley@test.com',
-                    cart: {
-                        items: []
-                    }
-                });
-            };
-            user.save();
-        });
         app.listen(3000);
     })
     .catch(err => console.log(err));
