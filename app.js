@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 const User = require('./models/user');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
-
+const flash = require('connect-flash');
 const MongoDBPassword = process.env.DB_PASSWORD;
 const MONGODB_URI = `mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop`
 
@@ -37,6 +37,8 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
+
+app.use(flash());
 
 app.use((req, res, next) => {
     if (!req.session.user) {
