@@ -8,7 +8,7 @@ exports.getProducts = (req, res, next) => {
         prods: products,
         pageTitle: 'All Products',
         path: '/products',
-        isAuthenticated: req.session.user
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => console.log(err));
@@ -22,7 +22,7 @@ exports.getProduct = (req, res, next) => {
         product: product,
         pageTitle: product.title,
         path: '/products',
-        isAuthenticated: req.session.user
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => console.log(err));
@@ -35,7 +35,7 @@ exports.getIndex = (req, res, next) => {
         prods: products,
         pageTitle: 'Shop',
         path: '/',
-        isAuthenticated: req.session.user
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => console.log(err));
@@ -50,7 +50,7 @@ exports.getCart = (req, res, next) => {
         path: '/cart',
         pageTitle: 'Your Cart',
         products: products,
-        isAuthenticated: req.session.user
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => console.log(err));
@@ -90,9 +90,8 @@ exports.postOrder = (req, res, next) => {
 
       const order = new Order({
         user: {
-          name: req.user.name,
+          email: req.user.email,
           userId: req.user
-
         },
         products: products
       });
@@ -116,7 +115,7 @@ exports.getOrders = (req, res, next) => {
         path: '/orders',
         pageTitle: 'Your Orders',
         orders: orders,
-        isAuthenticated: req.session.user
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => console.log(err));
@@ -134,31 +133,31 @@ req.user
  is being used as an instance of the User model which has been obtained from the database using the findById method. 
 The User model is defined in the ./models/user.js file.
 
-When the findById method returns a user object, it is attached to the req object by assigning it to the req.session.user
+When the findById method returns a user object, it is attached to the req object by assigning it to the req.user
  property. 
 This is done using the middleware function:
 
 app.use((req, res, next) => {
     User.findById("643359cbb3bfb460f2f91522")
         .then(user => {
-            req.session.user
+            req.user
  = user
             next();
         })
         .catch(err => console.log(err));
 });
 
-After attaching the user object to req.session.user
+After attaching the user object to req.user
 , it can be used in subsequent middleware functions and route handlers.
 
-In the postOrder function, req.session.user
+In the postOrder function, req.user
 .populate('cart.items.productId') is used to load the productId 
-of each item in the cart. Then, req.session.user
+of each item in the cart. Then, req.user
  is used to get the name and userId of the user who is placing the order. 
-Finally, req.session.user
+Finally, req.user
 .clearCart() is called to clear the cart of the user after the order has been placed.
 
-In the getOrders function, req.session.user
+In the getOrders function, req.user
 .getOrders() is used to get the orders placed by the user. 
 Here, getOrders() is assumed to be a custom method defined on the User model, which retrieves the orders 
 related to the user.

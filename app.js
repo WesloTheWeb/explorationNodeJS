@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 const User = require('./models/user');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
-
+const flash = require('connect-flash');
 const MongoDBPassword = process.env.DB_PASSWORD;
 const MONGODB_URI = `mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop`
 
@@ -38,14 +38,16 @@ app.use(session({
     store: store
 }));
 
+app.use(flash());
+
 app.use((req, res, next) => {
     if (!req.session.user) {
         return next();
     };
-     
+
     User.findById(req.session.user._id)
     .then(user => {
-        req.user = user
+        req.user = user;
         next();
     })
     .catch(err => console.log(err));
@@ -61,18 +63,6 @@ app.use(errorController.get404);
 // mongoose.connect(`mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop?retryWrites=true&w=majority`)
 mongoose.connect(MONGODB_URI)
     .then((result) => {
-        User.findOne().then(user => {
-            if (!user) {
-                const user = new User({
-                    name: 'Wesley',
-                    email: 'wesley@test.com',
-                    cart: {
-                        items: []
-                    }
-                });
-            };
-            user.save();
-        });
         app.listen(3000);
     })
     .catch(err => console.log(err));
