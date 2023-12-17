@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
 
+/* variables */
+:root {
+  --errorMessageBackground: #F6D8D8;
+  --errorMessageFontColor: #B33E3E;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -244,8 +250,9 @@ form {
 
 .user-message--error {
   border-color: red;
-  background: rgb(255, 176, 176);
-  color: red;
+  background: var(--errorMessageBackground);
+  color: var(--errorMessageFontColor);
+  font-weight: bold;
 }
 
 @media (min-width: 768px) {
