@@ -1,10 +1,24 @@
 const bcrypt = require('bcryptjs');
-
+const nodemailer = require('nodemailer');
 const User = require('../models/user');
+require('dotenv').config();
+
+const transporter = nodemailer.createTransport({
+    host: 'sandbox.smtp.mailtrap.io',
+    port: 2525,
+    auth: {
+        user: process.env.MAILTRAP_USER,
+        pass: process.env.MAILTRAP_PW
+    }
+});
+
+if (!process.env.MAILTRAP_USER || !process.env.MAILTRAP_PW) {
+    throw new Error('MAILTRAP credentials are not set in the environment.');
+}
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error');
-    
+
     if (message.length > 0) {
         message = message[0];
     } else {
@@ -21,13 +35,13 @@ exports.getLogin = (req, res, next) => {
 
 exports.getSignup = (req, res, next) => {
     let message = req.flash('error');
-    
+
     if (message.length > 0) {
         message = message[0];
     } else {
         message = null;
     };
-    
+
     res.render('auth/signup', {
         path: '/signup',
         pageTitle: 'Signup',
