@@ -1,8 +1,10 @@
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const User = require('../models/user');
 require('dotenv').config();
 
+// Email function using third party:
 const transporter = nodemailer.createTransport({
     host: 'sandbox.smtp.mailtrap.io',
     port: 2525,
@@ -146,5 +148,43 @@ exports.getReset = (req, res, next) => {
         pageTitle: 'Reset Password',
         errorMessage: message,
         isAuthenticated: false
+    });
+};
+
+exports.postReset = (req, res, next) => {
+    crypto.randomBytes(32, (error, buffer) => {
+        if (error) {
+            return res.redirect('/reset');
+        };
+
+        const token = buffer.toString('hex');
+        User.findOne({ email: req.body.email })
+            .then(user => {
+                if (!user) {
+                    req.flash('error', 'No account with that email was found. Please try again.');
+                    return res.redirect('/reset');
+                };
+
+                user.resetToken = token;
+                user.resetTokenExpiration = Date.now() + 3600000; // 1 hour
+                return user.save();
+            })
+            .then(result => {
+                res.redirect('/');
+                // send email to user with the token.
+                return transporter.sendMail({
+                    to: req.body.email,
+                    from: 'your-email@example.com',
+                    subject: 'Password Reset',
+                    html: `
+                        <p>You requested a password reset</p>
+                        <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+                        <label>This is valid for 1 hour</label>
+                    `
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            });
     });
 };
