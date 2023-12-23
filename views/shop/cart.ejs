@@ -6,7 +6,8 @@
         <main>
             <% if (products.length > 0) { %>
                 <ul>
-                    <% products.forEach(p => { %>
+                    <% products.forEach(p => { 
+                        if (p.productId) { %>
                         <li>
                             <h2><%= p.productId.title %> (<%= p.quantity %>) Cost: $<%= p.productId.price %></h2>
                             <form action="/cart-delete-item" method="POST">
@@ -14,7 +15,8 @@
                                 <button class="btn danger" type="submit">Delete</button>
                             </form>
                         </li>
-                    <% }) %>
+                    <% }
+                 }) %>
                 </ul>
                 <hr />
                 <div class="centered">
