@@ -57,7 +57,6 @@ exports.getSignup = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
-    const confirmPassword = req.body.confirmPassword;
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -71,39 +70,28 @@ exports.postSignup = (req, res, next) => {
         });
     };
 
-    User.findOne({ email: email })
-        .then(userDoc => {
-            if (userDoc) {
-                req.flash('error', 'Email already exists.');
-                return res.redirect('/signup');
-            };
+    bcrypt.hash(password, 12)
+        .then(hashedPassword => {
+            // ? Creating a user
+            const user = new User({
+                email: email,
+                password: hashedPassword,
+                cart: { items: [] }
+            });
 
-            return bcrypt.hash(password, 12)
-                .then(hashedPassword => {
-                    // ? Creating a user
-                    const user = new User({
-                        email: email,
-                        password: hashedPassword,
-                        cart: { items: [] }
-                    });
-
-                    return user.save();
-                })
-                .then(result => {
-                    res.redirect('/login');
-                    return transporter.sendMail({
-                        to: email,
-                        from: 'shop@node-complete.com',
-                        subject: 'Signup succeeded!',
-                        html: '<h1>You successfully signed up!</h1>'
-                    });
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+            return user.save();
         })
-        .catch(error => {
-            console.log(error)
+        .then(result => {
+            res.redirect('/login');
+            return transporter.sendMail({
+                to: email,
+                from: 'shop@node-complete.com',
+                subject: 'Signup succeeded!',
+                html: '<h1>You successfully signed up!</h1>'
+            });
+        })
+        .catch((error) => {
+            console.log(error);
         });
 };
 
