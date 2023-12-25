@@ -9,7 +9,20 @@ router.get('/signup', authController.getSignup);
 
 router.post('/login', authController.postLogin);
 
-router.post('/signup', check('email').isEmail(), authController.postSignup);
+router.post('/signup',
+    [check('email').
+        isEmail()
+        .withMessage('Please enter a valid email.')
+        .custom((val, { req }) => {
+            if (value === 'test@test.com') {
+                throw new Error('Real funny -__-. Use a real email address')
+            };
+            return true;
+        }),
+    check(),
+    ],
+    authController.postSignup
+);
 
 router.post('/logout', authController.postLogout);
 
