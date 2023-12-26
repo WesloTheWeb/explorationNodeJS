@@ -33,7 +33,7 @@ exports.getLogin = (req, res, next) => {
         path: '/login',
         pageTitle: 'Login',
         errorMessage: message,
-        isAuthenticated: false
+        // isAuthenticated: false
     });
 };
 
@@ -50,7 +50,7 @@ exports.getSignup = (req, res, next) => {
         path: '/signup',
         pageTitle: 'Signup',
         errorMessage: message,
-        isAuthenticated: false
+        // isAuthenticated: false
     });
 };
 
@@ -66,7 +66,7 @@ exports.postSignup = (req, res, next) => {
             path: '/signup',
             pageTitle: 'Signup',
             errorMessage: errors.array()[0].msg,
-            isAuthenticated: false
+            // isAuthenticated: false
         });
     };
 
@@ -98,6 +98,16 @@ exports.postSignup = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.render('auth/login', {
+            path: '/login',
+            pageTitle: 'Login',
+            errorMessage: errors.array()[0].msg,
+            // isAuthenticated: false
+        });
+    };
 
     User.findOne({ email: email })
         .then(user => {
@@ -149,7 +159,7 @@ exports.getReset = (req, res, next) => {
         path: '/reset',
         pageTitle: 'Reset Password',
         errorMessage: message,
-        isAuthenticated: false
+        // isAuthenticated: false
     });
 };
 
@@ -206,7 +216,7 @@ exports.getNewPassword = (req, res, next) => {
                 path: '/new-password',
                 pageTitle: 'New Password',
                 errorMessage: message,
-                isAuthenticated: false,
+                // isAuthenticated: false,
                 userId: user._id.toString(),
                 passwordToken: token
             });

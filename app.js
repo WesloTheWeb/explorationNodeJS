@@ -38,6 +38,14 @@ app.use(session({
     store: store
 }));
 
+app.use((req, res, next) => {
+    if (!req.isAuthenticated) {
+        res.locals.isAuthenticated = false;
+    }
+    next();
+});
+
+
 app.use(flash());
 
 app.use((req, res, next) => {
