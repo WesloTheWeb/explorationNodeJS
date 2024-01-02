@@ -70,6 +70,7 @@ app.use('/admin', adminRoutes);
 app.use(shopRoute);
 app.use(authRoutes);
 
+app.get('/500', errorController.get500);
 // 404 page catch all
 app.use(errorController.get404);
 
