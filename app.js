@@ -45,7 +45,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
 app.use(flash());
 
 app.use((req, res, next) => {
@@ -54,11 +53,17 @@ app.use((req, res, next) => {
     };
 
     User.findById(req.session.user._id)
-    .then(user => {
-        req.user = user;
-        next();
-    })
-    .catch(err => console.log(err));
+        .then(user => {
+            if (!user) {
+                return next();
+            };
+
+            req.user = user;
+            next();
+        })
+        .catch(err => {
+            throw new Error(err);
+        });
 });
 
 app.use('/admin', adminRoutes);
