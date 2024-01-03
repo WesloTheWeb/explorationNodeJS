@@ -62,7 +62,7 @@ app.use((req, res, next) => {
             next();
         })
         .catch(err => {
-            throw new Error(err);
+            next(new Error(err));
         });
 });
 
@@ -73,6 +73,14 @@ app.use(authRoutes);
 app.get('/500', errorController.get500);
 // 404 page catch all
 app.use(errorController.get404);
+
+app.use((error, req, res, next) => {
+    res.status(500).render('500', {
+      pageTitle: 'Error!',
+      path: '/500',
+      isAuthenticated: req.session.isLoggedIn
+    });
+  });
 
 // mongoose.connect(`mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop?retryWrites=true&w=majority`)
 mongoose.connect(MONGODB_URI)
