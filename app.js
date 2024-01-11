@@ -11,6 +11,7 @@ const User = require('./models/user');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const flash = require('connect-flash');
+const multer = require('multer');
 const MongoDBPassword = process.env.DB_PASSWORD;
 const MONGODB_URI = `mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop`
 
@@ -20,12 +21,34 @@ const store = new MongoDBStore({
     collection: 'sessions',
 });
 
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/images');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === 'image/png' ||
+        file.mimetype === 'image/jpg' ||
+        file.mimetype === 'image/jpeg'
+    ) {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    };
+};
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 // order matters on middleware:
 // parses form data
 app.use(express.urlencoded({ extended: true }));
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter}).single('image'));
 app.use(express.json());
 
 // allows static CSS file to be used.
@@ -76,11 +99,11 @@ app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
     res.status(500).render('500', {
-      pageTitle: 'Error!',
-      path: '/500',
-      isAuthenticated: req.session.isLoggedIn
+        pageTitle: 'Error!',
+        path: '/500',
+        isAuthenticated: !!req.session?.isLoggedIn
     });
-  });
+});
 
 // mongoose.connect(`mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop?retryWrites=true&w=majority`)
 mongoose.connect(MONGODB_URI)
