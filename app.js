@@ -53,6 +53,7 @@ app.use(express.json());
 
 // allows static CSS file to be used.
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(session({
     secret: 'my-secret',
