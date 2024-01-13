@@ -110,7 +110,6 @@ exports.postOrder = (req, res, next) => {
   // take all cart item and move them into an order
   req.user
     .populate('cart.items.productId')
-    .execPopulate()
     .then((user) => {
       const products = user.cart.items.map(i => {
         return { quantity: i.quantity, product: { ...i.productId._doc } };
@@ -192,7 +191,7 @@ exports.getInvoice = (req, res, next) => {
       pdfDoc.text("-----------------------");
       pdfDoc
         .fontSize(20)
-        .text(`Total Price: $${totalPrice}`);
+        .text(`Total Price: $${Math.ceil(totalPrice)}`);
       pdfDoc.end();
     })
     .catch((err) => next(err));
