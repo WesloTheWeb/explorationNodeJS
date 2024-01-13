@@ -158,41 +158,83 @@ exports.getOrders = (req, res, next) => {
 
 exports.getInvoice = (req, res, next) => {
   const orderId = req.params.orderId;
+  const SALES_TAX_RATE = 0.10; // Assuming a 10% sales tax rate.
 
   Order.findById(orderId)
     .then((order) => {
       const invoiceName = 'invoice-' + orderId + '.pdf';
       const invoicePath = path.join('data', 'invoices', invoiceName);
 
-      const pdfDoc = new PDFDocument();
+      // Initialize a PDFDocument with some margin for styling
+      const pdfDoc = new PDFDocument({ margin: 50 });
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader(
         'Content-Disposition',
         'inline; filename="' + invoiceName + '"'
       );
       pdfDoc.pipe(fs.createWriteStream(invoicePath));
-      pdfDoc.pipe(res); // writes to client
+      pdfDoc.pipe(res); // Send the PDF directly to the client.
 
-      // pdf styling
-      pdfDoc.fontSize(26).text("Invoice", {
-        underline: true
-      });
-      pdfDoc.text("-----------------------");
+      // Set up the header of the invoice
+      pdfDoc
+        .fontSize(26)
+        .font('Helvetica-Bold')
+        .text("Invoice", { align: 'center' })
+        .moveDown();
+
+      // Invoice number
+      pdfDoc
+        .fontSize(14)
+        .text(`Order ID: #${orderId}`, { align: 'left' })
+        .moveDown(0.5);
+
+      // Add a horizontal line
+      pdfDoc
+        .strokeColor("#aaaaaa")
+        .lineWidth(1)
+        .moveTo(50, 150)
+        .lineTo(550, 150)
+        .stroke()
+        .moveDown(0.5);
+
+      // List all products with their prices and quantities
+      let y = 160; // Keep track of the y position for the following items
       let totalPrice = 0;
-
-      order.products.forEach((prod) => {
+      order.products.forEach(prod => {
         totalPrice += prod.quantity * prod.product.price;
         pdfDoc
           .fontSize(14)
-          .text(`
-            ${prod.product.title} - ${prod.quantity} x $${prod.product.price}
-          `)
+          .text(`${prod.product.title} x${prod.quantity} $${prod.product.price.toFixed(2)}`, 50, y);
+        y += 20; // Increase the y position for the next product
       });
-      pdfDoc.text("-----------------------");
+
+      // Add a horizontal line before the total
+      pdfDoc
+        .strokeColor("#aaaaaa")
+        .moveTo(50, y)
+        .lineTo(550, y)
+        .stroke()
+        .moveDown(0.5);
+
+      // Calculate and display the subtotal, sales tax, and total price
+      const salesTax = totalPrice * SALES_TAX_RATE;
+      const totalPriceWithTax = totalPrice + salesTax;
+
+      pdfDoc
+        .fontSize(16)
+        .text(`Subtotal: $${totalPrice.toFixed(2)}`, 50, y + 20);
+      pdfDoc
+        .text(`Sales Tax (10%): $${salesTax.toFixed(2)}`, 50, y + 35);
       pdfDoc
         .fontSize(20)
-        .text(`Total Price: $${Math.ceil(totalPrice)}`);
+        .text(`Total Price: $${totalPriceWithTax.toFixed(2)}`, 50, y + 50);
+
+      // End the PDF document
       pdfDoc.end();
     })
-    .catch((err) => next(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
