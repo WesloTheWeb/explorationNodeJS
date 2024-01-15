@@ -143,11 +143,13 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.getCheckout = (req, res, next) => {
+  let products;
+  let total = 0;
+
   req.user
     .populate('cart.items.productId')
     .then((user) => {
-      const products = user.cart.items;
-      let total = 0;
+      products = user.cart.items;
 
       products.forEach((products) => {
         total += Math.ceil(products.quantity * products.productId.price);
