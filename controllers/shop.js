@@ -6,6 +6,7 @@ const PDFDocument = require('pdfkit');
 const product = require('../models/product');
 
 const ITEMS_PER_PAGE = 2;
+const SALES_TAX_RATE = 0.10; // Assuming a 10% sales tax rate.
 
 exports.getProducts = (req, res, next) => {
   const page = +req.query.page || 1;
@@ -149,14 +150,24 @@ exports.getCheckout = (req, res, next) => {
       let total = 0;
 
       products.forEach((products) => {
-        total += products.quantity * products.productId.price;
+        total += Math.ceil(products.quantity * products.productId.price);
       });
-      
+
+      const tax = total * SALES_TAX_RATE;
+      const totalWithTax = total + tax;
+
+      // Convert to strings with two decimal places for display
+      const totalString = total.toFixed(2);
+      const taxString = tax.toFixed(2);
+      const totalWithTaxString = totalWithTax.toFixed(2);
+
       res.render('shop/checkout', {
         path: '/checkout',
         pageTitle: 'Checkout',
         products: products,
-        totalSum: total,
+        totalSum: totalString,
+        salesTax: taxString,
+        totalWithTax: totalWithTaxString,
         isAuthenticated: req.session.isLoggedIn
       });
     })
@@ -219,7 +230,6 @@ exports.getOrders = (req, res, next) => {
 
 exports.getInvoice = (req, res, next) => {
   const orderId = req.params.orderId;
-  const SALES_TAX_RATE = 0.10; // Assuming a 10% sales tax rate.
 
   Order.findById(orderId)
     .then((order) => {

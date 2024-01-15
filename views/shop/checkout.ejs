@@ -5,6 +5,7 @@
     <body>
         <%- include('../includes/navigation.ejs') %>
             <main>
+                <h2>Checkout</h2>
                 <ul class="cart__item-list">
                     <% products.forEach(p=> {
                         if (p.productId) { %>
@@ -16,8 +17,13 @@
                         <% } }) %>
                 </ul>
                 <div class="centered">
-                    <h2>Total: <%= totalSum %>
+                    <h2>Subtotal: $<%= totalSum %>
+                    </h2>
+                    <h2>Sales Tax (10%): $<%= salesTax %>
+                    </h2>
+                    <h2>Total with Tax: $<%= totalWithTax %>
                     </h2>
                 </div>
+
             </main>
             <%- include('../includes/end.ejs') %>
