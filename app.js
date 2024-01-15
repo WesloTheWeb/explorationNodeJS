@@ -14,8 +14,33 @@ const flash = require('connect-flash');
 const multer = require('multer');
 const MongoDBPassword = process.env.DB_PASSWORD;
 const MONGODB_URI = `mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop`
+const StripeKey = process.env.StripeKey;
 
 const app = express();
+const stripe = require('stripe')(StripeKey);
+
+app.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'T-shirt',
+          },
+          unit_amount: 2000,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: 'http://localhost:4242/success',
+    cancel_url: 'http://localhost:4242/cancel',
+  });
+
+  res.redirect(303, session.url);
+});
+
 const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions',
