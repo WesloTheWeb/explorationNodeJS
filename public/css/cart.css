@@ -27,18 +27,27 @@
   .altButton {
     background-color: rgb(87, 181, 225);
     color: #fff;
-    font-weight: bold;
+  }
+
+  .altButton:hover {
+    background-color: rgb(48, 129, 167);
   }
   
   .stripeButton {
     background-color: #96A6FA;
     color: #fff;
-    font-weight: bold;
+  }
+
+  .stripeButton:hover {
+    background-color: #4a5bb1;
   }
 
   .checkOutButton {
     background-color: #22bc49;
     color: #fff;
-    font-weight: bold;
     border-radius: 10px;
+  }
+
+  .checkOutButton:hover {
+    background-color: #0e882d;
   }
