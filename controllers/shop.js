@@ -3,6 +3,7 @@ const path = require('path');
 const Product = require('../models/product');
 const Order = require('../models/order');
 const PDFDocument = require('pdfkit');
+const product = require('../models/product');
 
 const ITEMS_PER_PAGE = 2;
 
@@ -132,6 +133,32 @@ exports.postCartDeleteProduct = (req, res, next) => {
     .deleteItemFromCart(prodId)
     .then((result) => {
       res.redirect('/cart');
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+exports.getCheckout = (req, res, next) => {
+  req.user
+    .populate('cart.items.productId')
+    .then((user) => {
+      const products = user.cart.items;
+      let total = 0;
+
+      products.forEach((products) => {
+        total += products.quantity * products.productId.price;
+      });
+      
+      res.render('shop/checkout', {
+        path: '/checkout',
+        pageTitle: 'Checkout',
+        products: products,
+        totalSum: total,
+        isAuthenticated: req.session.isLoggedIn
+      });
     })
     .catch(err => {
       const error = new Error(err);
