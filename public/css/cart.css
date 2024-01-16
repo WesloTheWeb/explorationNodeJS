@@ -23,4 +23,31 @@
     margin: 0;
   }
   
+  /* Button for generating invoice and placing order */
+  .altButton {
+    background-color: rgb(87, 181, 225);
+    color: #fff;
+  }
+
+  .altButton:hover {
+    background-color: rgb(48, 129, 167);
+  }
   
+  .stripeButton {
+    background-color: #96A6FA;
+    color: #fff;
+  }
+
+  .stripeButton:hover {
+    background-color: #4a5bb1;
+  }
+
+  .checkOutButton {
+    background-color: #22bc49;
+    color: #fff;
+    border-radius: 10px;
+  }
+
+  .checkOutButton:hover {
+    background-color: #0e882d;
+  }

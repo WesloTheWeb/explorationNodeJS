@@ -21,12 +21,14 @@
                             <% } }) %>
                     </ul>
                     <hr />
-                    <div class="centered">
-                        <!-- <form action="/create-order" method="POST">
-                            <button type="submit" class="btn">Order Now!</button>
-                        </form> -->
-                        <a class="btn" href="/checkout">Go to Checkout</a>
-                    </div>
+                    <section class="centered">
+                        <form action="/create-order" method="POST">
+                            <button type="submit" class="btnProperties altButton">Generate Invoice</button>
+                        </form>
+                        <p>Choosing this option above will clear the cart and POST to the database and generate invoice on 'Orders' page</p>
+                        <a class="btnProperties stripeButton" href="/checkout">Go to Checkout</a>
+                        <p>Choosing this option will use the Stripe integration and generate a checkout page for demo purposes.</p>
+                    </section>
                     <% } else { %>
                         <h1>No Products in Cart!</h1>
                         <% } %>

@@ -4,6 +4,9 @@ const Product = require('../models/product');
 const Order = require('../models/order');
 const PDFDocument = require('pdfkit');
 const product = require('../models/product');
+const StripeKey = process.env.STRIPE_SECRET;
+
+const stripe = require('stripe')(StripeKey);
 
 const ITEMS_PER_PAGE = 2;
 const SALES_TAX_RATE = 0.10; // Assuming a 10% sales tax rate.
@@ -310,4 +313,39 @@ exports.getInvoice = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
+};
+
+// ? Stripe integration
+exports.createCheckoutSession = async (req, res, next) => {
+  try {
+    // Populate the user's cart items. Note: execPopulate() has been removed.
+    // If req.user is already a user document you can just await on populate.
+    await req.user.populate('cart.items.productId');
+
+    const lineItems = req.user.cart.items.map(item => {
+      return {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.productId.title,
+          },
+          unit_amount: Math.round(item.productId.price * 100),
+        },
+        quantity: item.quantity,
+      };
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: lineItems,
+      mode: 'payment',
+      success_url: `${req.headers.origin}/success`,
+      cancel_url: `${req.headers.origin}/cancel`,
+    });
+
+    res.redirect(303, session.url);
+  } catch (error) {
+    console.error('Error in createCheckoutSession:', error);
+    res.status(500).send("Failed to create a checkout session.");
+  }
 };

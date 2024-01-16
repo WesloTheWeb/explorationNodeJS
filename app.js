@@ -13,9 +13,10 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const flash = require('connect-flash');
 const multer = require('multer');
 const MongoDBPassword = process.env.DB_PASSWORD;
-const MONGODB_URI = `mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop`
+const MONGODB_URI = `mongodb+srv://Wesley:${MongoDBPassword}@cluster0.k30d4tr.mongodb.net/shop`;
 
 const app = express();
+
 const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions',
@@ -48,7 +49,7 @@ app.set('views', 'views');
 // order matters on middleware:
 // parses form data
 app.use(express.urlencoded({ extended: true }));
-app.use(multer({ storage: fileStorage, fileFilter: fileFilter}).single('image'));
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
 app.use(express.json());
 
 // allows static CSS file to be used.
