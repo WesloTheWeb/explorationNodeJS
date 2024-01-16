@@ -3,7 +3,6 @@ const path = require('path');
 const Product = require('../models/product');
 const Order = require('../models/order');
 const PDFDocument = require('pdfkit');
-const product = require('../models/product');
 const StripeKey = process.env.STRIPE_SECRET;
 
 const stripe = require('stripe')(StripeKey);
